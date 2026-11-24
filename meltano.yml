@@ -1,0 +1,54 @@
+send_anonymous_usage_stats: true
+project_id: "tap-contentful"
+default_environment: test
+requires_meltano: ">=4.0"
+environments:
+- name: test
+plugins:
+  extractors:
+  - name: "tap-contentful"
+    namespace: "tap_contentful"
+    pip_url: -e .
+    capabilities:
+    - state
+    - catalog
+    - discover
+    - about
+    - stream-maps
+    - structured-logging
+
+    settings:
+    - name: access_token
+      label: Access Token
+      description: Contentful Content Delivery API access token
+      sensitive: true
+
+    - name: space_id
+      label: Space ID
+      description: ID of the Contentful space to extract
+
+    - name: environment
+      label: Environment
+      description: Contentful environment ID
+
+    - name: start_date
+      kind: date_iso8601
+      label: Start Date
+      description: Initial date to start extracting data from
+
+    - name: api_url
+      label: API URL
+      description: Base URL for the Contentful API
+
+    settings_group_validation:
+    - [access_token, space_id]
+
+    config:
+      environment: master
+      start_date: 6 months ago
+      api_url: https://cdn.contentful.com
+
+  loaders:
+  - name: target-jsonl
+    variant: andyh1203
+    pip_url: target-jsonl
